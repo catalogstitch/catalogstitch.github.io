@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CatalogStitch | CVPR 2026 HiGen Workshop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --c-bg: #ffffff;
+      --c-surface: #f8f9fa;
+      --c-border: #e5e7eb;
+      --c-text: #1a1a2e;
+      --c-text-secondary: #6b7280;
+      --c-accent: #4f46e5;
+      --c-accent-light: #eef2ff;
+      --c-accent-dark: #3730a3;
+      --c-highlight: #f59e0b;
+      --c-highlight-light: #fef3c7;
+      --c-success: #10b981;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.1);
+      --radius: 12px;
+      --radius-lg: 20px;
+      --max-w: 1100px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--c-text);
+      background: var(--c-bg);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      text-align: center;
+      padding: 80px 24px 60px;
+      background: linear-gradient(180deg, #f0f0ff 0%, #ffffff 100%);
+      border-bottom: 1px solid var(--c-border);
+    }
+    .hero .badge {
+      display: inline-block;
+      background: var(--c-accent);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: 999px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, var(--c-accent), #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero .subtitle {
+      font-size: 1.15rem;
+      color: var(--c-text-secondary);
+      max-width: 680px;
+      margin: 0 auto 28px;
+      line-height: 1.6;
+    }
+    .hero .authors {
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+    }
+    .hero .authors a {
+      color: var(--c-text);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .hero .authors a:hover { color: var(--c-accent); }
+    .hero .authors span.sep { color: var(--c-text-secondary); margin: 0 4px; }
+    .hero .affiliation {
+      font-size: 0.95rem;
+      color: var(--c-accent);
+      font-weight: 600;
+      margin-bottom: 28px;
+    }
+    .btn-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: 1.5px solid var(--c-border);
+      color: var(--c-text);
+      background: #fff;
+    }
+    .btn:hover {
+      border-color: var(--c-accent);
+      color: var(--c-accent);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+    .btn.primary {
+      background: var(--c-accent);
+      color: #fff;
+      border-color: var(--c-accent);
+    }
+    .btn.primary:hover {
+      background: var(--c-accent-dark);
+      border-color: var(--c-accent-dark);
+      color: #fff;
+    }
+    .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    /* ===== SECTIONS ===== */
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+    section {
+      padding: 64px 0;
+      border-bottom: 1px solid var(--c-border);
+    }
+    section:last-of-type { border-bottom: none; }
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--c-accent);
+      margin-bottom: 8px;
+    }
+    h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+    p.body-text {
+      font-size: 1rem;
+      color: var(--c-text-secondary);
+      line-height: 1.8;
+      text-align: justify;
+    }
+    p.body-text + p.body-text { margin-top: 14px; }
+
+    /* Key insight callout */
+    .callout {
+      background: var(--c-accent-light);
+      border-left: 4px solid var(--c-accent);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 20px 24px;
+      margin: 24px 0 0;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+    .callout strong { color: var(--c-accent-dark); }
+
+    /* ===== PIPELINE ===== */
+    .pipeline-wrap {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin: 32px 0;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    .pipe-step {
+      flex: 1;
+      min-width: 150px;
+      text-align: center;
+      padding: 20px 14px;
+      border-radius: var(--radius);
+      position: relative;
+      font-size: 0.85rem;
+    }
+    .pipe-step .pipe-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 10px;
+      font-size: 1.2rem;
+    }
+    .pipe-step.input .pipe-icon { background: #dbeafe; }
+    .pipe-step.ours .pipe-icon { background: var(--c-accent-light); }
+    .pipe-step.model .pipe-icon { background: #fef3c7; }
+    .pipe-step.output .pipe-icon { background: #d1fae5; }
+    .pipe-step .pipe-title {
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+      color: var(--c-text);
+    }
+    .pipe-step.ours { background: var(--c-accent-light); }
+    .pipe-step .pipe-desc { color: var(--c-text-secondary); font-size: 0.78rem; }
+    .pipe-connector {
+      display: flex;
+      align-items: center;
+      padding: 0 2px;
+      color: var(--c-text-secondary);
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    /* ===== METHOD CARDS ===== */
+    .method-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 28px;
+    }
+    .method-card {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+    }
+    .method-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .method-card h3 .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--c-accent);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .method-card p { font-size: 0.9rem; color: var(--c-text-secondary); line-height: 1.7; }
+
+    /* ===== RESULTS ===== */
+    .results-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .results-tab {
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid var(--c-border);
+      background: #fff;
+      color: var(--c-text-secondary);
+      transition: all 0.2s;
+    }
+    .results-tab:hover { border-color: var(--c-accent); color: var(--c-accent); }
+    .results-tab.active {
+      background: var(--c-accent);
+      color: #fff;
+      border-color: var(--c-accent);
+    }
+    .example-block { margin-bottom: 36px; }
+    .example-block:last-child { margin-bottom: 0; }
+    .example-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .example-num {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--c-surface);
+      border: 1.5px solid var(--c-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .example-header span { font-weight: 600; font-size: 0.9rem; }
+    .model-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--c-text-secondary);
+      background: var(--c-surface);
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin: 12px 0 6px;
+      border: 1px solid var(--c-border);
+    }
+    .img-grid {
+      display: grid;
+      gap: 6px;
+    }
+    .img-grid.cols-5 { grid-template-columns: repeat(5, 1fr); }
+    .img-grid.cols-6 { grid-template-columns: repeat(6, 1fr); }
+    .img-grid img {
+      width: 100%;
+      height: 160px;
+      object-fit: contain;
+      border-radius: 8px;
+      border: 1px solid var(--c-border);
+      display: block;
+      transition: transform 0.2s;
+      background: var(--c-surface);
+    }
+    .img-grid img:hover { transform: scale(1.03); z-index: 1; }
+    .img-grid .col-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-align: center;
+      color: var(--c-text-secondary);
+      padding: 2px 0;
+    }
+    .img-grid .col-label.ours {
+      color: var(--c-accent);
+      font-weight: 700;
+    }
+    .before-after-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--c-text-secondary);
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-right: 4px;
+    }
+    .ba-row {
+      display: grid;
+      grid-template-columns: 20px 1fr;
+      gap: 4px;
+      margin-bottom: 4px;
+    }
+
+    /* ===== TABLE ===== */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    th {
+      padding: 12px 14px;
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--c-text-secondary);
+      border-bottom: 2px solid var(--c-border);
+      background: var(--c-surface);
+    }
+    th:first-child { text-align: left; }
+    td {
+      padding: 10px 14px;
+      text-align: center;
+      border-bottom: 1px solid var(--c-border);
+    }
+    td:first-child { text-align: left; font-weight: 500; }
+    tr:last-child td { border-bottom: none; }
+    tr.ours-row { background: var(--c-accent-light); }
+    tr.ours-row td:first-child { font-weight: 700; color: var(--c-accent-dark); }
+    .best { font-weight: 700; color: var(--c-accent); }
+
+    /* ===== BENCHMARK ===== */
+    .bench-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .bench-card {
+      border: 1.5px solid var(--c-border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      transition: box-shadow 0.2s;
+    }
+    .bench-card:hover { box-shadow: var(--shadow-md); }
+    .bench-card .num {
+      font-size: 2.8rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .bench-card:first-child .num { color: var(--c-accent); }
+    .bench-card:last-child .num { color: #7c3aed; }
+    .bench-card .bench-title { font-weight: 700; margin-bottom: 6px; }
+    .bench-card p { font-size: 0.88rem; color: var(--c-text-secondary); }
+
+    .includes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .includes-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: var(--c-text-secondary);
+    }
+    .includes-item .check {
+      color: var(--c-success);
+      font-weight: 700;
+      font-size: 1rem;
+      line-height: 1.5;
+      flex-shrink: 0;
+    }
+
+    .viewer-btns {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+    .viewer-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1.5px solid var(--c-accent);
+      color: var(--c-accent);
+      background: #fff;
+      transition: all 0.2s;
+    }
+    .viewer-btn:hover {
+      background: var(--c-accent);
+      color: #fff;
+      box-shadow: var(--shadow-sm);
+    }
+    .viewer-btn svg { width: 16px; height: 16px; }
+
+    .download-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      margin-top: 24px;
+    }
+
+    /* ===== CITATION ===== */
+    .cite-block {
+      position: relative;
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--c-border);
+      background: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--c-text-secondary);
+      transition: all 0.2s;
+    }
+    .copy-btn:hover { border-color: var(--c-accent); color: var(--c-accent); }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      color: var(--c-text-secondary);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--c-border);
+    }
+    footer a { color: var(--c-accent); text-decoration: none; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .hero { padding: 48px 20px 40px; }
+      .hero h1 { font-size: 2rem; }
+      h2 { font-size: 1.4rem; }
+      section { padding: 40px 0; }
+      .method-cards { grid-template-columns: 1fr; }
+      .bench-grid { grid-template-columns: 1fr; }
+      .img-grid.cols-5 { grid-template-columns: repeat(3, 1fr); }
+      .img-grid.cols-6 { grid-template-columns: repeat(3, 1fr); }
+      .pipeline-wrap { flex-direction: column; align-items: center; }
+      .pipe-connector { transform: rotate(90deg); }
+      .ba-row { grid-template-columns: 1fr; }
+      .before-after-label { writing-mode: horizontal-tb; transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<div class="hero">
+  <div class="badge">CVPR 2026 &middot; HiGen Workshop</div>
+  <h1>CatalogStitch</h1>
+  <p class="subtitle">Dimension-Aware and Occlusion-Preserving Object Compositing for Catalog Image Generation</p>
+  <div class="authors">
+    <a href="https://www.linkedin.com/in/jainsanyam/" target="_blank">Sanyam Jain</a><span class="sep">&middot;</span>
+    <a href="https://www.linkedin.com/in/pragya-k-8083133a/" target="_blank">Pragya Kandari</a><span class="sep">&middot;</span>
+    <a href="https://www.linkedin.com/in/manit-singhal-260162216/" target="_blank">Manit Singhal</a><span class="sep">&middot;</span>
+    <a href="https://sites.google.com/site/hezhangsprinter" target="_blank">He Zhang</a><span class="sep">&middot;</span>
+    <a href="https://sites.google.com/view/sooyekim" target="_blank">Soo Ye Kim</a>
+  </div>
+  <div class="affiliation">Adobe</div>
+  <div class="btn-row">
+    <a class="btn primary" href="CatalogStitch.pdf">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M10 12h4"/><path d="M10 16h4"/></svg>
+      Paper
+    </a>
+    <a class="btn" href="https://arxiv.org/abs/2604.08836">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 74.492 100.25" width="14" height="19" fill="currentColor"><path d="M586.72,255.616a3.377,3.377,0,0,1,.448.031,5.917,5.917,0,0,1,3.581,2.79c.454,1.116.314,2.023-1.315,4.141L563.168,293.6l-8.558-10.047,29.348-26.616a4.406,4.406,0,0,1,2.762-1.321m0-1.5a5.766,5.766,0,0,0-3.69,1.643l-.041.032-.038.035L553.6,282.442l-1.077.977.943,1.107,8.558,10.047,1.145,1.344,1.141-1.348,26.267-31.022.022-.027.022-.028c1.574-2.046,2.327-3.622,1.516-5.619a7.309,7.309,0,0,0-4.779-3.714,5.083,5.083,0,0,0-.64-.043Z" transform="translate(-526.086 -245.559)"/><path d="M553.423,284.593l8.977,10.558L597.911,337.9c.873,1.093,1.419,2.186,1.047,3.418a4.092,4.092,0,0,1-2.721,2.837,3.557,3.557,0,0,1-1.045.159,4,4,0,0,1-2.687-1.124L548.01,300.808c-3.5-3.5-2.971-8.151.436-11.558l4.977-4.657m.124-2.17L552.4,283.5l-4.976,4.656c-4.192,4.191-4.372,9.816-.473,13.714l44.521,42.4a5.485,5.485,0,0,0,3.722,1.538,5.1,5.1,0,0,0,1.483-.224,5.59,5.59,0,0,0,3.719-3.838,5.176,5.176,0,0,0-1.31-4.788l-35.53-42.767-8.988-10.571-1.019-1.2Z" transform="translate(-526.086 -245.559)"/><path d="M562.4,295.151l9.556,11.5,5.761-5.356a7.926,7.926,0,0,0,.041-11.743l-43.7-41.923s-1.671-2.029-3.437-2.071a4.49,4.49,0,0,0-4.23,2.718c-.688,1.651-.194,2.809,1.315,4.97l29.306,35.565Z" transform="translate(-526.086 -245.559)"/><path d="M553.7,306.223l-17.116,21.024c-1.255,1.337-2.032,3.683-1.331,5.367a4.587,4.587,0,0,0,4.287,2.841,4.087,4.087,0,0,0,3.082-1.523l20.328-18.9Z" transform="translate(-526.086 -245.559)"/></svg>
+      arXiv
+    </a>
+    <a class="btn" href="https://github.com/adobe-research/CatalogStitch">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      Dataset
+    </a>
+  </div>
+</div>
+
+<!-- ==================== ABSTRACT ==================== -->
+<section>
+  <div class="container">
+    <h2>Abstract</h2>
+    <p class="body-text">
+      Generative object compositing methods have shown remarkable ability to seamlessly insert objects into scenes. However, when applied to real-world catalog image generation, these methods require tedious manual intervention: users must carefully adjust masks when product dimensions differ, and painstakingly restore occluded elements post-generation. We present <strong>CatalogStitch</strong>, a set of model-agnostic techniques that automate these corrections, enabling user-friendly content creation. Our <em>dimension-aware mask computation</em> algorithm automatically adapts the target region to accommodate products with different dimensions; users simply provide a product image and background, without manual mask adjustments. Our <em>occlusion-aware hybrid restoration</em> method guarantees pixel-perfect preservation of occluding elements, eliminating post-editing workflows. We additionally introduce <strong>CatalogStitch-Eval</strong>, a 58-example benchmark covering aspect-ratio mismatch and occlusion-heavy catalog scenarios, together with supplementary PDF and HTML viewers. We evaluate our techniques with three state-of-the-art compositing models (ObjectStitch, OmniPaint, and InsertAnything), demonstrating consistent improvements across diverse catalog scenarios. By reducing manual intervention and automating tedious corrections, our approach transforms generative compositing into a practical, human-friendly tool for production catalog workflows.
+    </p>
+  </div>
+</section>
+
+<!-- ==================== DIMENSION RESULTS ==================== -->
+<section>
+  <div class="container">
+    <div class="section-label">Results</div>
+    <h2>Dimension-Aware Mask Compositing</h2>
+    <p class="body-text" style="margin-bottom:24px;">Products retain their native proportions with our adapted mask, while freeform and bounding-box masks cause stretching and distortion. Results consistent across all three compositing models.</p>
+
+    <!-- Example a -->
+    <div class="example-block">
+      <div class="example-header"><div class="example-num">a</div><span>Shoe replacement with different proportions</span></div>
+      <div class="img-grid cols-5">
+        <div class="col-label">Background</div>
+        <div class="col-label">Product</div>
+        <div class="col-label">Freeform</div>
+        <div class="col-label">BBox</div>
+        <div class="col-label ours">Ours</div>
+      </div>
+      <div class="model-tag">InsertAnything</div>
+      <div class="img-grid cols-5">
+        <img src="assets/stitch/6/bg_pexels-sneepcrew-8373049.jpg" alt="BG">
+        <img src="assets/stitch/6/obj_pexels-1242304473-30229963.jpg" alt="Product">
+        <img src="assets/stitch/6/insertAnything_nonOptimal.jpg" alt="Freeform">
+        <img src="assets/stitch/6/insertAnything_bbox.jpg" alt="BBox">
+        <img src="assets/stitch/6/insertAnything_optimal.jpg" alt="Ours">
+      </div>
+      <div class="model-tag">OmniPaint</div>
+      <div class="img-grid cols-5">
+        <img src="assets/stitch/6/bg_pexels-sneepcrew-8373049.jpg" alt="BG">
+        <img src="assets/stitch/6/obj_pexels-1242304473-30229963.jpg" alt="Product">
+        <img src="assets/stitch/6/omniPaint_nonOptimal.jpg" alt="Freeform">
+        <img src="assets/stitch/6/omniPaint_bbox.jpg" alt="BBox">
+        <img src="assets/stitch/6/omniPaint_optimal.jpg" alt="Ours">
+      </div>
+      <div class="model-tag">ObjectStitch</div>
+      <div class="img-grid cols-5">
+        <img src="assets/stitch/6/bg_pexels-sneepcrew-8373049.jpg" alt="BG">
+        <img src="assets/stitch/6/obj_pexels-1242304473-30229963.jpg" alt="Product">
+        <img src="assets/stitch/6/objectStitch_nonOptimal.jpg" alt="Freeform">
+        <img src="assets/stitch/6/objectStitch_bbox.jpg" alt="BBox">
+        <img src="assets/stitch/6/objectStitch_optimal.jpg" alt="Ours">
+      </div>
+    </div>
+
+    <!-- Example b -->
+    <div class="example-block">
+      <div class="example-header"><div class="example-num">b</div><span>Helmet replacement with aspect ratio mismatch</span></div>
+      <div class="model-tag">InsertAnything</div>
+      <div class="img-grid cols-5">
+        <img src="assets/stitch/14/bg_pexels-pravinkumar-ganesan-275577427-13023676.jpg" alt="BG">
+        <img src="assets/stitch/14/obj_pexels-pratik-brahmbhatt-1479980869-28051516.jpg" alt="Product">
+        <img src="assets/stitch/14/insertAnything_nonOptimal.jpg" alt="Freeform">
+        <img src="assets/stitch/14/insertAnything_bbox.jpg" alt="BBox">
+        <img src="assets/stitch/14/insertAnything_optimal.jpg" alt="Ours">
+      </div>
+      <div class="model-tag">OmniPaint</div>
+      <div class="img-grid cols-5">
+        <img src="assets/stitch/14/bg_pexels-pravinkumar-ganesan-275577427-13023676.jpg" alt="BG">
+        <img src="assets/stitch/14/obj_pexels-pratik-brahmbhatt-1479980869-28051516.jpg" alt="Product">
+        <img src="assets/stitch/14/omniPaint_nonOptimal.jpg" alt="Freeform">
+        <img src="assets/stitch/14/omniPaint_bbox.jpg" alt="BBox">
+        <img src="assets/stitch/14/omniPaint_optimal.jpg" alt="Ours">
+      </div>
+      <div class="model-tag">ObjectStitch</div>
+      <div class="img-grid cols-5">
+        <img src="assets/stitch/14/bg_pexels-pravinkumar-ganesan-275577427-13023676.jpg" alt="BG">
+        <img src="assets/stitch/14/obj_pexels-pratik-brahmbhatt-1479980869-28051516.jpg" alt="Product">
+        <img src="assets/stitch/14/objectStitch_nonOptimal.jpg" alt="Freeform">
+        <img src="assets/stitch/14/objectStitch_bbox.jpg" alt="BBox">
+        <img src="assets/stitch/14/objectStitch_optimal.jpg" alt="Ours">
+      </div>
+    </div>
+
+    <!-- Example c -->
+    <div class="example-block">
+      <div class="example-header"><div class="example-num">c</div><span>Product swap in lifestyle setting</span></div>
+      <div class="model-tag">InsertAnything</div>
+      <div class="img-grid cols-5">
+        <img src="assets/stitch/29/bg_pexels-eniko-toth-473630-32831579.jpg" alt="BG">
+        <img src="assets/stitch/29/obj_pexels-kindelmedia-7054763.jpg" alt="Product">
+        <img src="assets/stitch/29/insertAnything_nonOptimal.jpg" alt="Freeform">
+        <img src="assets/stitch/29/insertAnything_bbox.jpg" alt="BBox">
+        <img src="assets/stitch/29/insertAnything_optimal.jpg" alt="Ours">
+      </div>
+      <div class="model-tag">OmniPaint</div>
+      <div class="img-grid cols-5">
+        <img src="assets/stitch/29/bg_pexels-eniko-toth-473630-32831579.jpg" alt="BG">
+        <img src="assets/stitch/29/obj_pexels-kindelmedia-7054763.jpg" alt="Product">
+        <img src="assets/stitch/29/omniPaint_nonOptimal.jpg" alt="Freeform">
+        <img src="assets/stitch/29/omniPaint_bbox.jpg" alt="BBox">
+        <img src="assets/stitch/29/omniPaint_optimal.jpg" alt="Ours">
+      </div>
+      <div class="model-tag">ObjectStitch</div>
+      <div class="img-grid cols-5">
+        <img src="assets/stitch/29/bg_pexels-eniko-toth-473630-32831579.jpg" alt="BG">
+        <img src="assets/stitch/29/obj_pexels-kindelmedia-7054763.jpg" alt="Product">
+        <img src="assets/stitch/29/objectStitch_nonOptimal.jpg" alt="Freeform">
+        <img src="assets/stitch/29/objectStitch_bbox.jpg" alt="BBox">
+        <img src="assets/stitch/29/objectStitch_optimal.jpg" alt="Ours">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== OCCLUSION RESULTS ==================== -->
+<section>
+  <div class="container">
+    <div class="section-label">Results</div>
+    <h2>Occlusion-Aware Restoration</h2>
+    <p class="body-text" style="margin-bottom:24px;">Foreground occluders are perfectly preserved after compositing via exact pixel restoration. Comparing before and after our restoration step across mask types and compositing models.</p>
+
+    <!-- Occlusion Example a -->
+    <div class="example-block">
+      <div class="example-header"><div class="example-num">a</div><span>Sofa with foreground furniture</span></div>
+      <div class="img-grid cols-6" style="margin-bottom:8px;">
+        <div class="col-label">Background</div>
+        <div class="col-label">Product</div>
+        <div class="col-label">Occluders</div>
+        <div class="col-label">Freeform</div>
+        <div class="col-label">BBox</div>
+        <div class="col-label ours">Ours</div>
+      </div>
+      <div class="model-tag">InsertAnything &mdash; Before</div>
+      <div class="img-grid cols-6">
+        <img src="assets/occlusion/6/bg_purspective-sofa-8754140.jpg" alt="BG">
+        <img src="assets/occlusion/6/obj_trung1142-sofa-7347875.jpg" alt="Product">
+        <img src="assets/occlusion/6/overlaps_composite.jpg" alt="Occluders">
+        <img src="assets/occlusion/6/insertAnything_freeform_before.jpg" alt="Before FF">
+        <img src="assets/occlusion/6/insertAnything_bbox_before.jpg" alt="Before BB">
+        <img src="assets/occlusion/6/insertAnything_optimal_before.jpg" alt="Before Ours">
+      </div>
+      <div class="model-tag">InsertAnything &mdash; After Restoration</div>
+      <div class="img-grid cols-6">
+        <img src="assets/occlusion/6/bg_purspective-sofa-8754140.jpg" alt="BG">
+        <img src="assets/occlusion/6/obj_trung1142-sofa-7347875.jpg" alt="Product">
+        <img src="assets/occlusion/6/overlaps_composite.jpg" alt="Occluders">
+        <img src="assets/occlusion/6/insertAnything_freeform_after.jpg" alt="After FF">
+        <img src="assets/occlusion/6/insertAnything_bbox_after.jpg" alt="After BB">
+        <img src="assets/occlusion/6/insertAnything_optimal_after.jpg" alt="After Ours">
+      </div>
+      <div class="model-tag">ObjectStitch &mdash; Before</div>
+      <div class="img-grid cols-6">
+        <img src="assets/occlusion/6/bg_purspective-sofa-8754140.jpg" alt="BG">
+        <img src="assets/occlusion/6/obj_trung1142-sofa-7347875.jpg" alt="Product">
+        <img src="assets/occlusion/6/overlaps_composite.jpg" alt="Occluders">
+        <img src="assets/occlusion/6/objectStitch_nonOptimal_before.jpg" alt="Before FF">
+        <img src="assets/occlusion/6/objectStitch_bbox_before.jpg" alt="Before BB">
+        <img src="assets/occlusion/6/objectStitch_optimal_before.jpg" alt="Before Ours">
+      </div>
+      <div class="model-tag">ObjectStitch &mdash; After Restoration</div>
+      <div class="img-grid cols-6">
+        <img src="assets/occlusion/6/bg_purspective-sofa-8754140.jpg" alt="BG">
+        <img src="assets/occlusion/6/obj_trung1142-sofa-7347875.jpg" alt="Product">
+        <img src="assets/occlusion/6/overlaps_composite.jpg" alt="Occluders">
+        <img src="assets/occlusion/6/objectStitch_nonOptimal_after.jpg" alt="After FF">
+        <img src="assets/occlusion/6/objectStitch_bbox_after.jpg" alt="After BB">
+        <img src="assets/occlusion/6/objectStitch_optimal_after.jpg" alt="After Ours">
+      </div>
+    </div>
+
+    <!-- Occlusion Example b -->
+    <div class="example-block">
+      <div class="example-header"><div class="example-num">b</div><span>Scene with decorative elements</span></div>
+      <div class="model-tag">InsertAnything &mdash; Before</div>
+      <div class="img-grid cols-6">
+        <img src="assets/occlusion/7/bg_pexels-rdne-8581013.jpg" alt="BG">
+        <img src="assets/occlusion/7/obj_personalgraphic-com-4Co4l84sJWg-unsplash.jpg" alt="Product">
+        <img src="assets/occlusion/7/overlaps_composite.jpg" alt="Occluders">
+        <img src="assets/occlusion/7/insertAnything_freeform_before.jpg" alt="Before FF">
+        <img src="assets/occlusion/7/insertAnything_bbox_before.jpg" alt="Before BB">
+        <img src="assets/occlusion/7/insertAnything_optimal_before.jpg" alt="Before Ours">
+      </div>
+      <div class="model-tag">InsertAnything &mdash; After Restoration</div>
+      <div class="img-grid cols-6">
+        <img src="assets/occlusion/7/bg_pexels-rdne-8581013.jpg" alt="BG">
+        <img src="assets/occlusion/7/obj_personalgraphic-com-4Co4l84sJWg-unsplash.jpg" alt="Product">
+        <img src="assets/occlusion/7/overlaps_composite.jpg" alt="Occluders">
+        <img src="assets/occlusion/7/insertAnything_freeform_after.jpg" alt="After FF">
+        <img src="assets/occlusion/7/insertAnything_bbox_after.jpg" alt="After BB">
+        <img src="assets/occlusion/7/insertAnything_optimal_after.jpg" alt="After Ours">
+      </div>
+      <div class="model-tag">ObjectStitch &mdash; Before</div>
+      <div class="img-grid cols-6">
+        <img src="assets/occlusion/7/bg_pexels-rdne-8581013.jpg" alt="BG">
+        <img src="assets/occlusion/7/obj_personalgraphic-com-4Co4l84sJWg-unsplash.jpg" alt="Product">
+        <img src="assets/occlusion/7/overlaps_composite.jpg" alt="Occluders">
+        <img src="assets/occlusion/7/objectStitch_nonOptimal_before.jpg" alt="Before FF">
+        <img src="assets/occlusion/7/objectStitch_bbox_before.jpg" alt="Before BB">
+        <img src="assets/occlusion/7/objectStitch_optimal_before.jpg" alt="Before Ours">
+      </div>
+      <div class="model-tag">ObjectStitch &mdash; After Restoration</div>
+      <div class="img-grid cols-6">
+        <img src="assets/occlusion/7/bg_pexels-rdne-8581013.jpg" alt="BG">
+        <img src="assets/occlusion/7/obj_personalgraphic-com-4Co4l84sJWg-unsplash.jpg" alt="Product">
+        <img src="assets/occlusion/7/overlaps_composite.jpg" alt="Occluders">
+        <img src="assets/occlusion/7/objectStitch_nonOptimal_after.jpg" alt="After FF">
+        <img src="assets/occlusion/7/objectStitch_bbox_after.jpg" alt="After BB">
+        <img src="assets/occlusion/7/objectStitch_optimal_after.jpg" alt="After Ours">
+      </div>
+    </div>
+
+    <!-- Occlusion Example c -->
+    <div class="example-block">
+      <div class="example-header"><div class="example-num">c</div><span>Generated scene with occluding objects</span></div>
+      <div class="model-tag">InsertAnything &mdash; Before</div>
+      <div class="img-grid cols-6">
+        <img src="assets/occlusion/22/generated-bg-2.jpg" alt="BG">
+        <img src="assets/occlusion/22/generated-prd-2.jpg" alt="Product">
+        <img src="assets/occlusion/22/overlaps_composite.jpg" alt="Occluders">
+        <img src="assets/occlusion/22/insertAnything_freeform_before.jpg" alt="Before FF">
+        <img src="assets/occlusion/22/insertAnything_bbox_before.jpg" alt="Before BB">
+        <img src="assets/occlusion/22/insertAnything_optimal_before.jpg" alt="Before Ours">
+      </div>
+      <div class="model-tag">InsertAnything &mdash; After Restoration</div>
+      <div class="img-grid cols-6">
+        <img src="assets/occlusion/22/generated-bg-2.jpg" alt="BG">
+        <img src="assets/occlusion/22/generated-prd-2.jpg" alt="Product">
+        <img src="assets/occlusion/22/overlaps_composite.jpg" alt="Occluders">
+        <img src="assets/occlusion/22/insertAnything_freeform_after.jpg" alt="After FF">
+        <img src="assets/occlusion/22/insertAnything_bbox_after.jpg" alt="After BB">
+        <img src="assets/occlusion/22/insertAnything_optimal_after.jpg" alt="After Ours">
+      </div>
+      <div class="model-tag">ObjectStitch &mdash; Before</div>
+      <div class="img-grid cols-6">
+        <img src="assets/occlusion/22/generated-bg-2.jpg" alt="BG">
+        <img src="assets/occlusion/22/generated-prd-2.jpg" alt="Product">
+        <img src="assets/occlusion/22/overlaps_composite.jpg" alt="Occluders">
+        <img src="assets/occlusion/22/objectStitch_nonOptimal_before.jpg" alt="Before FF">
+        <img src="assets/occlusion/22/objectStitch_bbox_before.jpg" alt="Before BB">
+        <img src="assets/occlusion/22/objectStitch_optimal_before.jpg" alt="Before Ours">
+      </div>
+      <div class="model-tag">ObjectStitch &mdash; After Restoration</div>
+      <div class="img-grid cols-6">
+        <img src="assets/occlusion/22/generated-bg-2.jpg" alt="BG">
+        <img src="assets/occlusion/22/generated-prd-2.jpg" alt="Product">
+        <img src="assets/occlusion/22/overlaps_composite.jpg" alt="Occluders">
+        <img src="assets/occlusion/22/objectStitch_nonOptimal_after.jpg" alt="After FF">
+        <img src="assets/occlusion/22/objectStitch_bbox_after.jpg" alt="After BB">
+        <img src="assets/occlusion/22/objectStitch_optimal_after.jpg" alt="After Ours">
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ==================== QUANTITATIVE ==================== -->
+<section>
+  <div class="container">
+    <div class="section-label">Evaluation</div>
+    <h2>Quantitative Results</h2>
+    <p class="body-text" style="margin-bottom:20px;">Evaluated on CatalogStitch-Eval across five metrics. Our techniques consistently improve every baseline model.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left;">Method</th>
+            <th>AR Error &darr;</th>
+            <th>Occ. PSNR &uarr;</th>
+            <th>FID &darr;</th>
+            <th>CLIP &uarr;</th>
+            <th>DINO &uarr;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>OmniPaint</td><td>31.07</td><td>&mdash;</td><td>137.15</td><td>83.03</td><td>68.50</td></tr>
+          <tr class="ours-row"><td>OmniPaint + Ours</td><td>4.57</td><td>&mdash;</td><td>135.79</td><td>86.11</td><td>72.99</td></tr>
+          <tr><td>ObjectStitch</td><td>30.97</td><td>11.60</td><td>101.55</td><td>90.27</td><td>85.76</td></tr>
+          <tr class="ours-row"><td>ObjectStitch + Ours</td><td>5.05</td><td>26.84</td><td>91.52</td><td>90.62</td><td>88.09</td></tr>
+          <tr><td>InsertAnything</td><td>29.98</td><td>13.33</td><td>105.99</td><td>90.23</td><td>82.63</td></tr>
+          <tr class="ours-row"><td>InsertAnything + Ours</td><td class="best">3.92</td><td class="best">27.54</td><td class="best">77.72</td><td class="best">92.68</td><td class="best">88.30</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="body-text" style="font-size:0.88rem;">AR Error drops from ~30% to ~4&ndash;5% uniformly across all models. <strong>InsertAnything + Ours</strong> achieves best results on all five metrics.</p>
+  </div>
+</section>
+
+<!-- ==================== BENCHMARK ==================== -->
+<section>
+  <div class="container">
+    <div class="section-label">Dataset</div>
+    <h2>CatalogStitch-Eval Benchmark</h2>
+    <p class="body-text">A challenging evaluation benchmark specifically designed for catalog image compositing, covering both core failure modes.</p>
+
+    <div class="bench-grid">
+      <div class="bench-card">
+        <div class="num">35</div>
+        <div class="bench-title">Dimension Mismatch Scenes</div>
+        <p>Products with significantly different aspect ratios &mdash; tall lamps replacing wide tables, square bags replacing rectangular clutches, etc.</p>
+      </div>
+      <div class="bench-card">
+        <div class="num">23</div>
+        <div class="bench-title">Occlusion Scenes</div>
+        <p>Products partially occluded by 1&ndash;2 foreground elements &mdash; plants, vases, side tables, lamps, and decorative objects.</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem; margin:24px 0 16px; font-weight:700;">Explore the Benchmark</h3>
+    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:14px;">
+      <a href="dataset/index.html" style="display:flex; flex-direction:column; align-items:center; gap:10px; padding:24px 16px; border:1.5px solid var(--c-border); border-radius:var(--radius-lg); text-decoration:none; color:var(--c-text); transition:all 0.2s; background:#fff;" onmouseover="this.style.borderColor='var(--c-accent)';this.style.boxShadow='var(--shadow-md)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--c-border)';this.style.boxShadow='none';this.style.transform='none'">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--c-accent)" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span style="font-weight:700; font-size:0.9rem;">Dataset Overview</span>
+        <span style="font-size:0.78rem; color:var(--c-text-secondary); text-align:center;">Metadata, images, and masks</span>
+      </a>
+      <a href="dataset/results/stitch/index.html" style="display:flex; flex-direction:column; align-items:center; gap:10px; padding:24px 16px; border:1.5px solid var(--c-border); border-radius:var(--radius-lg); text-decoration:none; color:var(--c-text); transition:all 0.2s; background:#fff;" onmouseover="this.style.borderColor='var(--c-accent)';this.style.boxShadow='var(--shadow-md)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--c-border)';this.style.boxShadow='none';this.style.transform='none'">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--c-accent)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+        <span style="font-weight:700; font-size:0.9rem;">Dimension-Aware Results</span>
+        <span style="font-size:0.78rem; color:var(--c-text-secondary); text-align:center;">35 aspect-ratio mismatch examples</span>
+      </a>
+      <a href="dataset/results/occlusion/index.html" style="display:flex; flex-direction:column; align-items:center; gap:10px; padding:24px 16px; border:1.5px solid var(--c-border); border-radius:var(--radius-lg); text-decoration:none; color:var(--c-text); transition:all 0.2s; background:#fff;" onmouseover="this.style.borderColor='var(--c-accent)';this.style.boxShadow='var(--shadow-md)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--c-border)';this.style.boxShadow='none';this.style.transform='none'">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--c-accent)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+        <span style="font-weight:700; font-size:0.9rem;">Occlusion Results</span>
+        <span style="font-size:0.78rem; color:var(--c-text-secondary); text-align:center;">23 occlusion-heavy examples</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ==================== CITATION ==================== -->
+<section>
+  <div class="container">
+    <div class="section-label">Reference</div>
+    <h2>Citation</h2>
+    <div class="cite-block" id="bibtex">
+      <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('bibtex-text').textContent);this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',2000);">Copy</button>
+<span id="bibtex-text">@inproceedings{catalogstitch,
+  title     = {CatalogStitch: Dimension-Aware and Occlusion-Preserving Object Compositing for Catalog Image Generation},
+  author    = {Sanyam Jain and Pragya Kandari and Manit Singhal and He Zhang and Soo Ye Kim},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops},
+  workshop  = {HiGen: Human-Interactive Generation and Editing},
+  year      = {2026}
+}</span>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+</footer>
+
+</body>
+</html>
